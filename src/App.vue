@@ -1,17 +1,36 @@
 <template>
+  <transition name="fade">
   <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
+    <div v-if="!result">
+      <img alt="Vue logo" src="./assets/logo.png">
+      <Input @showResult="showResult"/>
+    </div>
+    <div v-if="result">
+      <Output :result="result"/>
+    </div>
   </div>
+  </transition>
+
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+import Input from './components/Input.vue'
+import Output from './components/Output.vue'
 
 export default {
   name: 'app',
   components: {
-    HelloWorld
+    Input,Output
+  },
+  data:function () {
+    return {
+      result:false
+    }
+  },
+  methods:{
+    showResult(value){
+      this.result = value;
+    }
   }
 }
 </script>

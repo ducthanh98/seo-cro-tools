@@ -4,6 +4,7 @@ const lighthouse = require('lighthouse');
 module.exports = class MeasureService {
     static async analyze(req,res){
         try {
+            console.log(req.body,req.method)
             const {url} = req.body;
 
             const isInvalid = MeasureService.isValidUrl(url);
@@ -13,7 +14,7 @@ module.exports = class MeasureService {
             const lhr = await MeasureService.SEOCheck(url)
 
 
-            return res.json(lhr.lhr);
+            return res.json({data:lhr.lhr});
         } catch (e) {
             console.log(e);
             return res.json({error: true})

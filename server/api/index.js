@@ -1,5 +1,6 @@
 const {Router} = require('express');
 const measureController = require('./measure/measure.controller');
+const scrapingController = require('./scraping/scraping.controller');
 
 module.exports = class Routes {
     static initialize(){
@@ -12,5 +13,6 @@ module.exports = class Routes {
 
     static routes(router){
         router.use('/',measureController.initialize())
+        router.use('/scraping',scrapingController.initialize())
     }
 }

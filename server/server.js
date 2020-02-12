@@ -4,7 +4,7 @@ const cors = require('cors');
 module.exports = class Server {
     constructor(port) {
         this.app = express();
-        this.port = port || 3000;
+        this.port = process.env.PORT || port || 3000;
         this.start()
     }
 

@@ -1,5 +1,6 @@
 <template>
   <div >
+    <img alt="Vue logo" src="../assets/logo.png">
     <el-row>
       <el-col :span="20"><el-input placeholder="Please input" v-model="url"></el-input></el-col>
       <el-col :span="2" :offset="1"><el-button type="primary" @click="checkWebsite()">Check our site</el-button></el-col>
@@ -12,6 +13,7 @@
 <script>
 export default {
   name: 'Input',
+  props:['api'],
   data() {
     return {
       colors: [
@@ -48,9 +50,17 @@ export default {
 
         this.startLoading();
 
-        const data = await this.$http.post('http://localhost:3000/api/measure',{url: this.url})
 
-        this.endLoading('success',data);
+        const response = await this.$http.post(this.api,{url: this.url})
+
+
+        if(response.data.data){
+          this.endLoading('success',response.data);
+        }else{
+          this.endLoading('exception',response.data);
+        }
+
+
       } catch (e) {
         this.endLoading('exception');
       }
@@ -59,17 +69,30 @@ export default {
       this.isLoading = true;
       this.percentage = 0;
       this.status = null;
+
+
       this.loadingProgress = setInterval(()=>{
         const number = Math.floor(Math.random() * 11);
         const percentage = this.percentage + number;
         if(percentage < 100) this.percentage = percentage;
       },1000);
+
+
     },
     endLoading(status,data){
       this.percentage = 100;
       this.status = status;
+
+
       clearInterval(this.loadingProgress);
-      if(!data.data.error)  setTimeout(()=>{this.$emit('showResult',data.data)},1000);
+
+
+      if(!data.error)  setTimeout(()=>{this.$emit('showResult',data.data)},1000);
+      else if(data.error) {
+        return this.$notify({title: 'Error', message: data.error, type: 'error'});
+      } else {
+        return this.$notify({title: 'Error', message: 'Error', type: 'error'});
+      }
     }
 
   },

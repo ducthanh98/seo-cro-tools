@@ -1,17 +1,17 @@
 const chromeLauncher = require('chrome-launcher');
 const lighthouse = require('lighthouse');
 
-module.exports = class MeasureService {
-    static async analyze(req,res){
+class MeasureService {
+    async analyze(req,res){
         try {
             console.log(req.body,req.method)
             const {url} = req.body;
 
-            const isInvalid = MeasureService.isValidUrl(url);
+            const isInvalid = this.isValidUrl(url);
             if(!isInvalid) return res.json({error:"URL_INVALID"});
 
 
-            const lhr = await MeasureService.SEOCheck(url)
+            const lhr = await this.SEOCheck(url)
 
 
             return res.json({data:lhr.lhr});
@@ -20,7 +20,7 @@ module.exports = class MeasureService {
             return res.json({error: true})
         }
     }
-    static isValidUrl(url){
+    isValidUrl(url){
         const pattern = new RegExp('^(https?:\\/\\/)?'+ // protocol
             '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|'+ // domain name
             '((\\d{1,3}\\.){3}\\d{1,3}))'+ // OR ip (v4) address
@@ -30,7 +30,7 @@ module.exports = class MeasureService {
         return pattern.test(url);
     }
 
-    static async SEOCheck(url){
+    async SEOCheck(url){
         const opts = {
             chromeFlags: ['--headless'],
             logLevel: 'info',
@@ -47,3 +47,5 @@ module.exports = class MeasureService {
         return lhr;
     }
 }
+
+module.exports = new MeasureService();

@@ -1,8 +1,8 @@
 const {Router} = require('express');
 const measureService = require('./measure.service');
 
-module.exports = class MeasureController {
-    static initialize(){
+class MeasureController {
+    initialize(){
         const router = Router();
 
         this.routes(router)
@@ -10,7 +10,8 @@ module.exports = class MeasureController {
         return router;
     }
 
-    static routes(router){
-        router.post('/measure',measureService.analyze)
+    routes(router){
+        router.post('/',measureService.analyze)
     }
 }
+module.exports = new MeasureController();

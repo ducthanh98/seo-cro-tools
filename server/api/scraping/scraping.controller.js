@@ -1,8 +1,8 @@
 const {Router} = require('express');
 const scrapingService = require('./scraping.service');
 
-module.exports = class ScrapingController {
-    static initialize(){
+class ScrapingController {
+    initialize(){
         const router = Router();
 
         this.routes(router)
@@ -10,7 +10,9 @@ module.exports = class ScrapingController {
         return router;
     }
 
-    static routes(router){
-        router.post('/',scrapingService.scraping)
+    routes(router){
+        router.post('/',scrapingService.scraping())
     }
 }
+
+module.exports =  new ScrapingController();

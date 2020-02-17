@@ -1,14 +1,14 @@
 const axios = require('axios');
-const fs = require('fs');
-module.exports = class ScrapingService {
-    static async scraping(req,res){
+
+class ScrapingService {
+    async scraping(req,res){
         try {
             const {url} = req.body;
-            const isInvalid = ScrapingService.isValidUrl(url);
+            const isInvalid = this.isValidUrl(url);
             if(!isInvalid) return res.json({error:"URL_INVALID"});
 
 
-            const source = await ScrapingService.getHTML(url)
+            const source = await this.getHTML(url)
 
 
             return res.json({data:source});
@@ -17,7 +17,9 @@ module.exports = class ScrapingService {
             return res.json({error: true})
         }
     }
-    static isValidUrl(url){
+
+
+    isValidUrl(url){
         const pattern = new RegExp('^(https?:\\/\\/)?'+ // protocol
             '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|'+ // domain name
             '((\\d{1,3}\\.){3}\\d{1,3}))'+ // OR ip (v4) address
@@ -27,7 +29,8 @@ module.exports = class ScrapingService {
         return pattern.test(url);
     }
 
-    static async getHTML(url){
+
+    async getHTML(url){
        const body = await  axios.get(url);
 
        const matchUrlRegex = new RegExp('^.+?[^\\/:](?=[?\\/]|$)','gm');
@@ -36,24 +39,26 @@ module.exports = class ScrapingService {
         let html = body.data;
 
 
-        html = ScrapingService.convertToTrueUrl(html,baseUrl[0]);
+        html = this.convertToTrueUrl(html,baseUrl[0]);
 
 
-       const listScript = ScrapingService.getListSrc(html);
+       const listScript = this.getListSrc(html);
 
 
-       html = ScrapingService.removeScriptHasSrc(html);
+       html = this.removeScriptHasSrc(html);
 
        return {html:html,scripts:listScript};
     }
 
-    static convertToTrueUrl(html,url){
+
+    convertToTrueUrl(html,url){
         html = html.replace(new RegExp('(src="\/)','g'),`src="${url}/`);
         html = html.replace(new RegExp('(href="\/)','g'),`href="${url}/`);
         return html
     }
 
-    static getListSrc(html){
+
+    getListSrc(html){
         const scriptRegex = new RegExp(/<script.*?src="(.*?)"/,'g');
         let listScript = html.match(scriptRegex);
 
@@ -65,9 +70,12 @@ module.exports = class ScrapingService {
         return listScript;
     }
 
-    static removeScriptHasSrc(html){
+
+    removeScriptHasSrc(html){
         const removeRegex = new RegExp(/(<script).+(src=").+(<\/script>)/,'g');
         html = html.replace(removeRegex,'');
         return html;
     }
 }
+
+module.exports = new ScrapingService();

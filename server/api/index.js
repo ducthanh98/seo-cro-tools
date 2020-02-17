@@ -12,7 +12,7 @@ module.exports = class Routes {
     }
 
     static routes(router){
-        router.use('/',measureController.initialize())
+        router.use('/measure',measureController.initialize())
         router.use('/scraping',scrapingController.initialize())
     }
 }
